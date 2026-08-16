@@ -12,7 +12,7 @@ model_folder = Path(__file__).parent/"models"
 
 
 tfidf = joblib.load(model_folder / "tfidf.pkl")
-model = joblib.load(model_folder / "xgboost_sentiment.pkl")
+model = joblib.load(model_folder / "svm.pkl")
 reverse_map =joblib.load(model_folder / "reverse_map.pkl")
 
 

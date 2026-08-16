@@ -54,17 +54,11 @@ export default function DashboardPage() {
 
           <SummaryCard
             title="Accuracy"
-            value="73%"
+            value="75%"
             description="ML Model"
             icon={<Brain className="h-6 w-6" />}
           />
 
-          <SummaryCard
-            title="API Status"
-            value="Online"
-            description="FastAPI"
-            icon={<Activity className="h-6 w-6" />}
-          />
         </div>
       </section>
 
