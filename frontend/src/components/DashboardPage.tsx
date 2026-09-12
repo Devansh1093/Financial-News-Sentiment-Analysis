@@ -2,12 +2,11 @@
 import SummaryCard from "./SummaryCard";
 import CompanyCard from "./CompanyCard";
 import LatestAnalysis from "./Analysis";
-import RecentHeadlines from "./Headline";
+
 import {
   Building2,
   Newspaper,
-  Brain,
-  Activity,
+  Brain
 } from "lucide-react";
 
 export default function DashboardPage() {
