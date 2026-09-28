@@ -34,4 +34,42 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 └── README.md
 ```
 
-## How
+## How It Works
+
+1. **Data prep:** Financial PhraseBank is cleaned and explored (class balance, text length, vocabulary).
+2. **Features:** TF-IDF vectorization produces the feature matrix for classical models.
+3. **Models:** Classical classifiers on TF-IDF are benchmarked against FinBERT. Class imbalance is handled with SMOTE.
+4. **Serving:** The best model is loaded by the FastAPI backend and exposed as an API.
+5. **Dashboard:** The React frontend lets you enter a ticker (e.g. `AAPL`) and view the latest sentiment analysis.
+
+## Backend
+
+```bash
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+API runs at `http://localhost:8000`. Interactive docs at `/docs`.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/analyze/{ticker}` | Latest sentiment analysis for a company |
+| GET | `/companies` | Supported companies |
+
+<!-- Update endpoints to match your actual routes -->
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Runs at `http://localhost:5173`. Set the backend URL in `.env`:
+
+```
+VITE_API_URL=http://localhost:8000
+```
