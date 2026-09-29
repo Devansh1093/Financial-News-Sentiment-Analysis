@@ -29,7 +29,7 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 .
 ├── Data/         # Raw and processed datasets
 ├── Notebooks/    # EDA, feature engineering, model training
-├── backend/      # FastAPI service: sentiment inference + news endpoints
+├── backend/      # FastAPI service: sentiment inference and news endpoints
 ├── frontend/     # React + TypeScript dashboard
 └── README.md
 ```
