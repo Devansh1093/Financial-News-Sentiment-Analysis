@@ -17,11 +17,10 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 
 | Layer | Tools |
 |-------|-------|
-| ML / NLP | Python, scikit-learn, TF-IDF, FinBERT, imbalanced-learn (SMOTE) |
-| Data | Financial PhraseBank, news datasets, pandas |
+| ML / NLP | Python, scikit-learn, TF-IDF,imbalanced-learn (SMOTE) |
+| Data | Financial PhraseBank, Yahoo Fianance |
 | Backend | FastAPI, Uvicorn |
 | Frontend | React, TypeScript |
-| Experimentation | Jupyter Notebooks |
 
 ## Project Structure
 
