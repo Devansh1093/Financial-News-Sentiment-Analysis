@@ -15,7 +15,7 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 
 ## Tech Stack
 
-| Layer | Tools |
+| Layers | Tools |
 |-------|-------|
 | ML / NLP | Python, scikit-learn, TF-IDF,imbalanced-learn (SMOTE) |
 | Data | Financial PhraseBank, Yahoo Fianance |
