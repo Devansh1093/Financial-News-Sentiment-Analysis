@@ -1,6 +1,6 @@
 # MarketSight: Financial News Sentiment Analysis
 
-Predict market trends from financial news. MarketSight classifies the sentiment of financial headlines and articles with an ML model, then serves the results through a FastAPI backend and a React dashboard.
+Predict market trends from financial news. MarketSight classifies the sentiment of financial headlines and articles with an ML model, that serves the results through a FastAPI backend and a React dashboard.
 
 **Live demo:** <!-- add production URL -->
 
