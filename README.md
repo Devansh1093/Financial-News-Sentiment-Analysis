@@ -35,9 +35,9 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 
 ## How It Works
 
-1. **Data prep:** Financial PhraseBank is cleaned and explored (class balance, text length, vocabulary).
+1. **Data preprocessing:** Financial PhraseBank is cleaned and explored (class balance, text length, vocabulary).
 2. **Features:** TF-IDF vectorization produces the feature matrix for classical models.
-3. **Models:** Classical classifiers on TF-IDF are benchmarked against FinBERT. Class imbalance is handled with SMOTE.
+3. **Model:** Classical classifiers on TF-IDF are benchmarked against FinBERT. Class imbalance is handled with SMOTE.
 4. **Serving:** The best model is loaded by the FastAPI backend and exposed as an API.
 5. **Dashboard:** The React frontend lets you enter a ticker (e.g. `AAPL`) and view the latest sentiment analysis.
 
