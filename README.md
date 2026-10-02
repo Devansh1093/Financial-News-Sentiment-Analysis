@@ -7,8 +7,8 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 <!-- ![MarketSight dashboard](docs/dashboard.png) -->
 
 ## Highlights
-- 2,500+ articles analyzed
-- ~75% model accuracy on sentiment classification
+- 2,500 articles analyzed
+- 75% model accuracy on sentiment classification
 - Live news pipeline: fetch, score and display sentiment per ticker
 
 ## Tech Stack
