@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from prediction import predict_sentiment
 from pydantic import BaseModel
-from news_fetcher import get_news
+from news_fetcher import get_news, normalize_ticker
 from analysis import analyze
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,7 +10,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://financial-news-sentiment-analysis-kappa.vercel.app"],
+    allow_origins=[
+        "https://financial-news-sentiment-analysis-kappa.vercel.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +46,7 @@ def predict(request:NewsRequest):
 @app.get("/stock/{ticker}")
 
 def stock_sentiment(ticker: str):
-
+    ticker = normalize_ticker(ticker)
     headlines = get_news(ticker)
 
     results = []

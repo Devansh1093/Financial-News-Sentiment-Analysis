@@ -10,7 +10,7 @@ def analyze(results):
         "Negative": counts.get("Negative",0)
     }
 
-    overall = max(summary,key = summary.get)
+    overall = max(summary, key=summary.get) if results else None
 
     return {
         "overall_sentiment": overall,
