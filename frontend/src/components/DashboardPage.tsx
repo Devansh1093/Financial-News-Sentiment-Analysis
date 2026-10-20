@@ -1,19 +1,70 @@
 import { useEffect, useState, type FormEvent } from "react";
 import SummaryCard from "./SummaryCard";
-import CompanyCard from "./CompanyCard";
 import api from "../api";
 import SentimentChart from "./SentimentChart";
 import RecentHeadlines from "./Headline";
 
-import { Building2, Newspaper, Brain } from "lucide-react";
+import { Building2, Newspaper, Brain, MessagesSquare } from "lucide-react";
 
 type StockAnalysis = {
   ticker: string;
-  overall_sentiment: string;
+  overall_sentiment: string | null;
   total_articles: number;
   summary: Record<string, number>;
   headlines: { headline: string; sentiment: string }[];
 };
+
+type RecentAnalysis = {
+  ticker: string;
+  total_articles: number;
+  overall_sentiment: string | null;
+  analyzed_at: string;
+};
+
+type MarketDiscussion = {
+  ticker: string;
+  total_articles: number;
+};
+
+const RECENT_ANALYSES_KEY = "finance-recent-analyses";
+
+function RecentAnalyses({
+  analyses,
+  onSelect,
+}: {
+  analyses: RecentAnalysis[];
+  onSelect: (ticker: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {analyses.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No analyses yet. Search for a company to get started.</p>
+      ) : (
+        analyses.map((item) => (
+            <button
+              key={item.ticker}
+              type="button"
+              onClick={() => onSelect(item.ticker)}
+              className="flex w-full items-center justify-between rounded-lg border p-3 text-left transition hover:border-cyan-500 hover:shadow-sm"
+            >
+              <span className="min-w-0">
+                <span className="block">
+                  <strong>{item.ticker}</strong>
+                  <span className="ml-2 text-xs text-muted-foreground">{item.total_articles} articles</span>
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                  {new Date(item.analyzed_at).toLocaleString()}
+                </span>
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {item.overall_sentiment ?? "Unavailable"}
+              </span>
+            </button>
+        ))
+      )}
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,6 +72,53 @@ export default function DashboardPage() {
   const [analysis, setAnalysis] = useState<StockAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [recentAnalyses, setRecentAnalyses] = useState<RecentAnalysis[]>(() => {
+    try {
+      const saved = localStorage.getItem(RECENT_ANALYSES_KEY);
+      const parsed: unknown = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed as RecentAnalysis[] : [];
+    } catch {
+      return [];
+    }
+  });
+  const [mostDiscussed, setMostDiscussed] = useState<MarketDiscussion | null>(null);
+  const [marketDiscussionLoading, setMarketDiscussionLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    api.get<{ most_discussed: MarketDiscussion[] }>("/market-movers", {
+      params: { timezone_offset_minutes: new Date().getTimezoneOffset() },
+    })
+      .then(({ data }) => {
+        if (active) setMostDiscussed(data.most_discussed?.[0] ?? null);
+      })
+      .catch(() => {
+        if (active) setMostDiscussed(null);
+      })
+      .finally(() => {
+        if (active) setMarketDiscussionLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(RECENT_ANALYSES_KEY, JSON.stringify(recentAnalyses));
+  }, [recentAnalyses]);
+
+  useEffect(() => {
+    if (!analysis) return;
+    const latest: RecentAnalysis = {
+      ticker: analysis.ticker,
+      total_articles: analysis.total_articles,
+      overall_sentiment: analysis.overall_sentiment,
+      analyzed_at: new Date().toISOString(),
+    };
+    setRecentAnalyses((current) => [
+      latest,
+      ...current.filter((item) => item.ticker !== latest.ticker),
+    ].slice(0, 5));
+  }, [analysis]);
 
   useEffect(() => {
     let active = true;
@@ -98,55 +196,23 @@ export default function DashboardPage() {
             icon={<Brain className="h-6 w-6" />}
           />
 
+          <SummaryCard
+            title="Most Discussed Today"
+            value={marketDiscussionLoading ? "…" : mostDiscussed?.ticker ?? "—"}
+            description={mostDiscussed
+              ? `${mostDiscussed.total_articles} articles across tracked companies`
+              : marketDiscussionLoading ? "Loading market news" : "No market news available today"}
+            icon={<MessagesSquare className="h-6 w-6" />}
+          />
+
         </div>
       </section>
 
-      {/* Popular Companies & Latest Analysis */}
+      {/* Recent Analyses & Latest Analysis */}
       <section className="grid grid-cols-3 gap-6">
-  <div>
-    <h2 className="mb-4 text-lg font-semibold">
-      Popular Companies
-    </h2>
-
-    <div className="space-y-4">
-
-      <CompanyCard
-        name="Apple"
-        ticker="AAPL"
-        onClick={() => handleCompanyClick("AAPL")}
-      />
-
-      <CompanyCard
-        name="Tesla"
-        ticker="TSLA"
-        onClick={() => handleCompanyClick("TSLA")}
-      />
-
-      <CompanyCard
-        name="Microsoft"
-        ticker="MSFT"
-        onClick={() => handleCompanyClick("MSFT")}
-      />
-
-      <CompanyCard
-        name="Google"
-        ticker="GOOGL"
-        onClick={() => handleCompanyClick("GOOGL")}
-      />
-
-      <CompanyCard
-        name="Amazon"
-        ticker="AMZN"
-        onClick={() => handleCompanyClick("AMZN")}
-      />
-
-      <CompanyCard
-        name="NVIDIA"
-        ticker="NVDA"
-        onClick={() => handleCompanyClick("NVDA")}
-      />
-
-    </div>
+  <div className="space-y-6">
+    <h2 className="text-lg font-semibold"> History</h2>
+    <RecentAnalyses analyses={recentAnalyses} onSelect={handleCompanyClick} />
   </div>
 
   
@@ -154,7 +220,7 @@ export default function DashboardPage() {
   <div className="col-span-2 rounded-xl border p-6">
     <h2 className="mb-4 text-lg font-semibold">
       
-      Latest Analysis
+      Search Company
 
     </h2>
     <form onSubmit={searchCompany} className="mb-4 flex gap-2">
@@ -173,12 +239,14 @@ export default function DashboardPage() {
         Analyze
       </button>
     </form>
-    {!selectedTicker && <p className="text-sm text-muted-foreground">Search for a company or choose one from Popular Companies.</p>}
+    {!selectedTicker && <p className="text-sm text-muted-foreground">Search for a company to view its latest sentiment analysis.</p>}
     {loading && <p className="text-sm text-muted-foreground">Loading {selectedTicker} analysis…</p>}
     {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
     {analysis && !loading && <>
-      <p>Overall Sentiment: <strong>{analysis.overall_sentiment}</strong></p>
+      <p>Overall Sentiment: <strong>{analysis.overall_sentiment ?? "Unavailable"}</strong></p>
       <p>Total Articles: {analysis.total_articles}</p>
+      {analysis.total_articles === 0 &&
+        <p className="text-sm text-muted-foreground">No recent news articles were found for this company.</p>}
     </>}
   </div>
 
