@@ -40,33 +40,9 @@ Predict market trends from financial news. MarketSight classifies the sentiment 
 5. **Dashboard:** The React frontend lets you enter a ticker (e.g. `AAPL`) and view the latest sentiment analysis.
 
 ## Backend
-
-```bash
-cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-API runs at `http://localhost:8000`. Interactive docs at `/docs`.
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/analyze/{ticker}` | Latest sentiment analysis for a company |
-| GET | `/companies` | Supported companies |
-
-<!-- Update endpoints to match your actual routes -->
+Backend is running on Render
+https://finance-backend-zys6.onrender.com/
 
 ## Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Runs at `http://localhost:5173`. Set the backend URL in `.env`:
-
-```
-VITE_API_URL=http://localhost:8000
-```
+The application is deployed on vercel.
+https://financial-news-sentiment-analysis-kappa.vercel.app/
